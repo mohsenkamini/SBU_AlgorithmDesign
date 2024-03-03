@@ -4,9 +4,9 @@
 using namespace std;
 
 int elementExists(int x, const multiset<int>& array, vector<bool>& flag, int m, int& existings) {
-    for (auto it = array.lower_bound(x) ; *it == x && it != array.end() ; it++ ) {
-        int index = distance(array.begin(), it);
-        if (!flag[index]) {
+    int index = 0;
+    for (auto it = array.begin(); it != array.end(); ++it, ++index) {
+        if (*it == x && !flag[index]) {
             flag[index] = true;
             existings += x;
             return index;
