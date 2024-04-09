@@ -27,13 +27,15 @@ class BST {
 private:
     TreeNode* root;
     int leftnessBorder ,rightnessBorder;
+    vector<TreeNode*> leftResultsNodes;
+    vector<TreeNode*> rightResultsNodes;
 public:
-    vector<int> leftResults, lRRightness, lRLeftness;
-    vector<int> rightResults,rRRightness, rRLeftness;
     BST(int value) : root(nullptr) {
         root = new TreeNode(value);
         leftnessBorder=0;   
         rightnessBorder=0;
+        leftResultsNodes.push_back(root);
+        //rightResultsNodes.push_back(root);
     }
 
     // Function to insert a value into the BST given the value, parent value, and direction
@@ -56,9 +58,11 @@ public:
         if (direction == 'L') {
             new_node =  new TreeNode(value, parent->leftness + 1, parent->rightness, 'L');
             parent->left = new_node;
+            handleLeftResults(new_node);
         } else if (direction == 'R') { 
             new_node = new TreeNode(value, parent->leftness, parent->rightness + 1, 'R');
             parent->right = new_node;
+            handleRightResults(new_node);
         } else {
             cout << "Invalid direction specified!" << endl;
             return;
@@ -70,10 +74,35 @@ public:
             new_node->subtreeFamily='R';
         }
     }
-    void handleLeftnessVectors(TreeNode* node, vector<int>& leftResults,vector<int>&  lRRightness,vector<int>&  lRLeftness) {
+    void handleLeftResults(TreeNode* node) {
+    //void handleLeftnessVectors() {
         int index = node->leftness-node->rightness;
-        if (lRRightness[index] >= node->rightness) {}
+        if (index >= leftResultsNodes.size()) {
+            leftResultsNodes.push_back(node);
+            return;
+        }
 
+        if (leftResultsNodes[index]->rightness > node->rightness) {
+            leftResultsNodes[index]=node;
+        } else if (leftResultsNodes[index]->rightness == node->rightness) { 
+            if (leftResultsNodes[index]->subtreeFamily == 'R')
+                leftResultsNodes[index]=node;
+        }
+    }
+
+    void handleRightResults(TreeNode* node) {
+        int index = node->rightness-node->leftness;
+        if (index >= rightResultsNodes.size()) {
+            rightResultsNodes.push_back(node);
+            return;
+        } 
+
+        if (rightResultsNodes[index]->leftness > node->leftness) {
+            rightResultsNodes[index]=node;
+        } else if (rightResultsNodes[index]->leftness == node->leftness) { 
+            if (rightResultsNodes[index]->subtreeFamily == 'L')
+                rightResultsNodes[index]=node;
+        }
     }
     // Helper function for inorder traversal
     void inorderHelper(TreeNode* node) {
@@ -168,6 +197,15 @@ public:
         int rightDepth = getTreeDepth(node->right);
         return max(leftDepth, rightDepth) + 1;
     }
+    void printLeftResults() {
+        for (int i=leftResultsNodes.size()-1; i >=0  ; i--)
+            cout << leftResultsNodes[i]->val << " ";
+    }
+
+    void printRightResults() {
+        for (int i=0; i < rightResultsNodes.size() ; i++)
+            cout << rightResultsNodes[i]->val << " ";
+    }
 };
 
 int main() {
@@ -185,7 +223,9 @@ int main() {
         bst.insert(childValue, parentValue, direction);
     }
 
-    bst.printTree();
-
+    //bst.printTree();
+    // bst.handleLeftnessVectors();
+    bst.printLeftResults();
+    bst.printRightResults();
     return 0;
 }
