@@ -4,9 +4,9 @@
 #include <list>
 using namespace std;
 
-void showlist(list<int> l)
+void showlist(list<long> l)
 {
-	list<int>::iterator it;
+	list<long>::iterator it;
 	for (it = l.begin(); it != l.end(); ++it)
 		cout << ' ' << *it;
 	cout << '\n';
@@ -14,17 +14,16 @@ void showlist(list<int> l)
 
 int main()
 {
-
-
-	list<int> evenList, evenIndex, oddList, oddIndex ;
-    int n,modifiedN;
+	list<long> evenList, evenIndex, oddList, oddIndex ;
+    long n,modifiedN;
 
     cin >> n;
+
     modifiedN=n;
-	for (int i = 0; i < n; ++i) {
-        int input;
+	for (long i = 0; i < n; ++i) {
+        long input;
         cin >> input;
-        if (input >0) {
+        if (input >= 0) {
             if (input%2==0){
                 evenList.push_back(input);
                 evenIndex.push_back(i);
@@ -38,9 +37,8 @@ int main()
             switch (input) {
                 case -1:
                     if (!evenList.empty()){
-                        cout << evenIndex.size() << endl;
-                        //evenList.pop_front();
-                        //evenIndex.pop_front();
+                        evenList.pop_front();
+                        evenIndex.pop_front();
                     }
                     break;
                 case -2:
@@ -67,11 +65,11 @@ int main()
         }
 	}
 
-    for (int i=0 ; i < modifiedN ; i++) {
-        int eCandidate=0;
-        int eCandidateIndex=-1;
-        int oCandidate=0;
-        int oCandidateIndex=-1;
+    for (long i=0 ; i < modifiedN ; i++) {
+        long eCandidate=0;
+        long eCandidateIndex=-1;
+        long oCandidate=0;
+        long oCandidateIndex=-1;
         if (!oddList.empty()){
             oCandidate=oddList.front();
             oCandidateIndex=oddIndex.front();
@@ -80,18 +78,17 @@ int main()
             eCandidate=evenList.front();
             eCandidateIndex=evenIndex.front();
         }
-        if (oCandidateIndex == -1 || ( eCandidateIndex != -1 && oCandidateIndex > eCandidateIndex) ) {
+        if (oCandidateIndex == -1 && eCandidateIndex != -1 || ( eCandidateIndex != -1 && oCandidateIndex > eCandidateIndex) ) {
             cout << eCandidate;
             evenList.pop_front();
             evenIndex.pop_front();
         }
-        if (eCandidateIndex == -1 || ( oCandidateIndex != -1 && oCandidateIndex < eCandidateIndex) ) {
+        if (eCandidateIndex == -1 && oCandidateIndex != -1 || ( oCandidateIndex != -1 && oCandidateIndex < eCandidateIndex) ) {
             cout << oCandidate;
             oddList.pop_front();
             oddIndex.pop_front();
         }
-        if (i < modifiedN-1)
-            cout << " ";
+        cout << " ";
     }
 
 	//showlist(evenList);
