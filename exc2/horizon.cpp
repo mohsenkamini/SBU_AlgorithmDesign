@@ -35,22 +35,22 @@ public:
         leftnessBorder=0;   
         rightnessBorder=0;
         leftResultsNodes.push_back(root);
-        //rightResultsNodes.push_back(root);
+        rightResultsNodes.push_back(root);
     }
 
     // Function to insert a value into the BST given the value, parent value, and direction
-    void insert(int value, int parentValue, char direction) {
+    int insert(int value, int parentValue, char direction) {
         if (root == nullptr) {
             root = new TreeNode(value);
             leftnessBorder=0;
             rightnessBorder=0;
-            return;
+            return 0;
         }
 
         TreeNode* parent = findNode(root, parentValue);
         if (parent == nullptr) {
             cout << "Parent node not found!" << endl;
-            return;
+            return -1;
         }
         
         TreeNode* new_node = nullptr; 
@@ -65,7 +65,7 @@ public:
             handleRightResults(new_node);
         } else {
             cout << "Invalid direction specified!" << endl;
-            return;
+            return -1;
         }
         // check the subtreeFamily again.
         if (parent->subtreeFamily == 'L' ) {
@@ -73,91 +73,92 @@ public:
         } else if (parent->subtreeFamily == 'R' ) {
             new_node->subtreeFamily='R';
         }
+        return 0;
     }
     void handleLeftResults(TreeNode* node) {
     //void handleLeftnessVectors() {
         int index = node->leftness-node->rightness;
+        int depth = node->rightness+node->leftness;
+        
         if (index >= leftResultsNodes.size()) {
             leftResultsNodes.push_back(node);
             return;
         }
 
-        if (leftResultsNodes[index]->rightness > node->rightness) {
+        TreeNode* aimedNode = leftResultsNodes[index];
+        int aimedNodeDepth = aimedNode->rightness+aimedNode->leftness;
+
+        if (aimedNodeDepth > depth) {
             leftResultsNodes[index]=node;
-        } else if (leftResultsNodes[index]->rightness == node->rightness) { 
-            if (leftResultsNodes[index]->subtreeFamily == 'R')
+            return;
+        }
+        
+        if (aimedNodeDepth == depth) { 
+            if (aimedNode->subtreeFamily == 'R')
                 leftResultsNodes[index]=node;
         }
     }
 
     void handleRightResults(TreeNode* node) {
         int index = node->rightness-node->leftness;
+        int depth = node->rightness+node->leftness;
+        
         if (index >= rightResultsNodes.size()) {
             rightResultsNodes.push_back(node);
             return;
         } 
+        
+        TreeNode* aimedNode = rightResultsNodes[index];
+        int aimedNodeDepth = aimedNode->rightness+aimedNode->leftness;
 
-        if (rightResultsNodes[index]->leftness > node->leftness) {
+        if (aimedNodeDepth > depth) {
             rightResultsNodes[index]=node;
-        } else if (rightResultsNodes[index]->leftness == node->leftness) { 
-            if (rightResultsNodes[index]->subtreeFamily == 'L')
+            return;
+        }
+        
+        if (aimedNodeDepth == depth) { 
+            if (aimedNode->subtreeFamily == 'L')
                 rightResultsNodes[index]=node;
         }
     }
-    // Helper function for inorder traversal
-    void inorderHelper(TreeNode* node) {
-        if (node == nullptr) {
-            return;
-        }
-
-        inorderHelper(node->left);
-        cout << node->val << " ";
-        inorderHelper(node->right);
-    }
-
-    // Function to perform an inorder traversal of the BST
-    void inorderTraversal() {
-        inorderHelper(root);
-    }
-
     void printTree() {
-        if (root == nullptr) {
-            cout << "Tree is empty!" << endl;
-            return;
-        }
-    
-        int depth = getTreeDepth(root);
-        int width = pow(2, depth - 1) * 8; // Updated width to accommodate leftness and rightness values
-    
-        queue<TreeNode*> q;
-        q.push(root);
-    
-        for (int i = 0; i < depth; i++) {
-            int levelSize = pow(2, i);
-            int padding = width / (levelSize * 2);
-    
-            cout << string(padding, ' ');
-    
-            for (int j = 0; j < levelSize; j++) {
-                TreeNode* curr = q.front();
-                q.pop();
-    
-                if (curr != nullptr) {
-                    cout << "(" << setw(2) << curr->leftness << ")" << setw(2) << curr->val << " " << curr->subtreeFamily << "(" << setw(2) << curr->rightness << ")";
-                    q.push(curr->left);
-                    q.push(curr->right);
-                } else {
-                    cout << "                  "; // Updated spacing to accommodate leftness and rightness values
-                    q.push(nullptr);
-                    q.push(nullptr);
-                }
-    
-                cout << string(padding * 2 - 1, ' ');
-            }
-    
-            cout << endl;
-        }
+    if (root == nullptr) {
+        cout << "Tree is empty!" << endl;
+        return;
     }
+
+    int depth = getTreeDepth(root);
+    int width = pow(2, depth - 1) * 6; // Adjusted width to reduce spacing
+
+    queue<TreeNode*> q;
+    q.push(root);
+
+    for (int i = 0; i < depth; i++) {
+        int levelSize = pow(2, i);
+        int padding = width / (levelSize * 2);
+
+        cout << string(padding, ' ');
+
+        for (int j = 0; j < levelSize; j++) {
+            TreeNode* curr = q.front();
+            q.pop();
+
+            if (curr != nullptr) {
+                cout << "(" << setw(2) << curr->leftness << ")" << setw(2) << curr->val << "(" << setw(2) << curr->rightness << ")"; // Adjusted spacing
+                q.push(curr->left);
+                q.push(curr->right);
+            } else {
+                cout << "        "; // Adjusted spacing
+                q.push(nullptr);
+                q.push(nullptr);
+            }
+
+            cout << string(padding * 2 - 1, ' ');
+        }
+
+        cout << endl;
+    }
+}
     // Function to search for a value in the BST
     bool search(int value) {
         TreeNode* curr = root;
@@ -203,8 +204,11 @@ public:
     }
 
     void printRightResults() {
-        for (int i=0; i < rightResultsNodes.size() ; i++)
-            cout << rightResultsNodes[i]->val << " ";
+        for (int i=1; i < rightResultsNodes.size() ; i++) {
+            cout << rightResultsNodes[i]->val;
+            if (i!=rightResultsNodes.size()-1)
+                cout << " ";
+        }
     }
 };
 
@@ -214,16 +218,30 @@ int main() {
 
     int n;
     cin >> n;
+    vector<tuple<int, int, char>> leftInstructions;
 
     int childValue, parentValue;
     char direction;
 
     for (int i = 1; i < n; i++) {
         cin >> childValue >> parentValue >> direction;
-        bst.insert(childValue, parentValue, direction);
+        int status = bst.insert(childValue, parentValue, direction);
+        //if  (status == -1)
+        //    leftInstructions.push_back(make_tuple(childValue, parentValue, direction));
     }
 
-    //bst.printTree();
+    //for (const auto& node : leftInstructions) {
+    //    int childValue = get<0>(node);
+    //    int parentValue = get<1>(node);
+    //    char direction = get<2>(node);
+    //    //cout << childValue << " " << parentValue << " " << direction << endl;
+    //    int status = bst.insert(childValue, parentValue, direction);
+    //        if (status == -1)
+    //        
+    //}
+
+
+    bst.printTree();
     // bst.handleLeftnessVectors();
     bst.printLeftResults();
     bst.printRightResults();
