@@ -17,9 +17,7 @@ void calculateIndexValues(char c, int word1InputIndex, int word2Index, int total
             word1CorrespondingIndex[word2Index]= word1InputIndex;
           }
         } //else if (word1CorrespondingIndex[i] == word1InputIndex)
-
     }
-
 }
 
 vector<int> findIndicesInWord1(const string& word1, char c) {
@@ -120,10 +118,11 @@ int main() {
                             remainingCost, word1CorrespondingIndex, word2PrvIndex, totalCost);
         int minIndex=0;
         int minValue=totalCost;
-        //for (int i=0 ; i<word2.length() ; i++) {
-        //    cout << word2[i] << " ";
-        //}
-        //cout << endl;
+        cout << endl << i << ": " << endl;
+        for (int i=0 ; i<word2.length() ; i++) {
+            cout << word2[i] << " ";
+        }
+        cout << endl;
         for (int i=0 ; i<word2.length() ; i++) {
             //cout << remainingCost[i] << " ";
             if (remainingCost[i]< minValue)
@@ -132,20 +131,20 @@ int main() {
                 minIndex=i;
             }
         }
-        //cout << endl;
-        //for (int i=0 ; i<word2.length() ; i++) {
-        //    cout << word1CorrespondingIndex[i] << " ";
-        //}
-        //cout << endl;
-        //for (int i=0 ; i<word2.length() ; i++) {
-        //    cout << word2PrvIndex[i] << " ";
-        //}
-        //cout << endl << minValue << endl;
+        cout << endl;
+        for (int i=0 ; i<word2.length() ; i++) {
+            cout << word1CorrespondingIndex[i] << " ";
+        }
+        cout << endl;
+        for (int i=0 ; i<word2.length() ; i++) {
+            cout << word2PrvIndex[i] << " ";
+        }
+        cout << endl << minValue << endl;
         result += minValue;
         printResult(minIndex, word2, word2PrvIndex, resultStr);
-        resultStr += ',';
-        //cout << endl;
+        resultStr += ' ';
+        cout << endl;
     }
-    cout << result << ',' << resultStr.substr(0, resultStr.length()-1);
+    cout << result << ' ' << resultStr.substr(0, resultStr.length()-1);
     return 0;
 }
