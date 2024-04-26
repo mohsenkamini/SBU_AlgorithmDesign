@@ -141,10 +141,11 @@ int main() {
         cin >> j;
         matrix[i][j - 1] = -1;
     }
+    printMatrix(matrix);
 
     bfs(&matrix);
 
-    //printMatrix(matrix);
+    printMatrix(matrix);
     cout << matrix[n - 1][n - 1];
     return 0;
 }
